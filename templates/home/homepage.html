@@ -1,0 +1,201 @@
+
+{% extends 'base/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+HomePage
+{% endblock title %}
+
+{% block style %}
+<style>
+    .borderless-th{
+        border: none!important;
+        
+    }
+</style>
+
+{% endblock style %}
+
+{% block content %}
+<form action="{% url 'homepage' %}" method="POST">
+    <div class="mt-5"></div>
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mt-3">Search</button>
+</form>
+
+{% if data %}
+<div class="my-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Type</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense_data in data %}
+            <tr class="{% if expense_data.type == 'Added' %} table-primary {% else %}  table-danger {% endif %}">
+                <th scope="row">{{ expense_data.date }}</th>
+                <th>{{ expense_data.title }}</th>
+                <td>{{ expense_data.description }}</td>
+                <td>{{ expense_data.type }}</td>
+                <td>{{ expense_data.amount }} 
+                    <span class="float-end">
+                            <i class="bi bi-trash" data-bs-toggle="modal" data-bs-target="#exampleModal"></i>
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Delete Transaction?</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete {{ expense_data.title }} transaction?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <a href="{% url 'delete-transaction' expense_data.pk %}" class="btn btn-danger">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </span></td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-success">Total Added</td>
+                <td class="border table-success">{{ total_added }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-danger">Total Spent</td>
+                <td class="border table-danger">{{ total_spent }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-warning">Actual Balance</td>
+                <td class="border table-warning">{{ actual_balance }}</td>
+            </tr>
+    
+        </tbody>
+    </table>
+
+</div>
+
+
+{% elif data is not None %}
+
+<div class="mt-5">
+    <h1>No result Found.</h1>
+</div>
+
+{% endif %}
+
+
+
+{% if loan_data %}
+<div class="my-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Person</th>
+                <th scope="col">Detail</th>
+                <th scope="col">Type</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in loan_data %}
+            <tr class="{% if data.type == 'Loan Paid to' or data.type == 'Loan Gave to' %} table-primary {% else %}  table-danger {% endif %}">
+                <th scope="row">{{ data.date }}</th>
+                <th>{{ data.person }}</th>
+                <td>{{ data.detail }}</td>
+                <td>{{ data.type }}</td>
+                <td> {% if data.loan_time %} {{ data.loan_time }} {% endif %}</td>
+                <td>{{ data.amount }}
+                    <span class="float-end">
+                        <i class="bi bi-trash" data-bs-toggle="modal" data-bs-target="#loanModal"></i>
+                        <div class="modal fade" id="loanModal" tabindex="-1" aria-labelledby="loanModallabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="loanModallabel">Delete Loan?</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete {{ data.title }} Loan?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <a href="{% url 'delete-loan' data.pk %}"
+                                            class="btn btn-danger">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-success">Total Paid By</td>
+                <td class="border table-success">{{ paid_by }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-danger">Total Paid To</td>
+                <td class="border table-danger">{{ paid_to }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-success">Total Gave By</td>
+                <td class="border table-success">{{ gave_by }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="borderless-th"></th>
+                <th class="borderless-th"></th>
+                <td class="borderless-th"></td>
+                <td class="border table-danger">Total Gave To</td>
+                <td class="border table-danger">{{ gave_to }}</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+</div>
+
+
+{% elif loan_data is not None %}
+
+<div class="mt-5">
+    <h1>No result Found.</h1>
+</div>
+
+{% endif %}
+
+
+{% endblock content %}
