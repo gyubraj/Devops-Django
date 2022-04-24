@@ -36,7 +36,8 @@ change following
         'NAME': '<Database_name>',
         'USER':'<Username>',
         'PASSWORD':'<Password>',
-        'HOST':'<Host>'   # This will be localhost when running locally
+        'HOST':'<Host>',   # This will be localhost when running locally
+        'PORT': <database running port number>  # By default for postgres it is 5432
     }
 }
 ```
