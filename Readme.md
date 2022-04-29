@@ -67,7 +67,7 @@ last run the program
     docker-compose logs -f 
 
     # To stop 
-    Docker-compose down
+    docker-compose down
 
 ```
 
