@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 
@@ -91,14 +92,15 @@ WSGI_APPLICATION = 'main.wsgi.application'
 #     }
 # }
 
+print(os.environ.get('POSTGRES_NAME'),os.environ.get('POSTGRES_USER'))
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test',
-        'USER':'yubrajupadhaya',
-        'PASSWORD':'1234',
-        'HOST':'localhost',
-        'PORT':5432
+        'NAME': os.environ.get('POSTGRES_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
